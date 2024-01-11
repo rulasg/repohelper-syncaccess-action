@@ -15,7 +15,7 @@ inputs:
 outputs:
   table-of-updates:
     description: "Table of updates"
-    value: ${{steps.run-sync-repo-access.table-of-updates}}
+    value: ${{steps.result.resultJson}}
 runs:
   using: "composite"
   steps:
@@ -56,41 +56,41 @@ runs:
 
           "Found file $ret" | Write-Host
 
-          echo "filePath=$ret" >> $env:GITHUB_OUTPUT
-          echo "filePathEnv=$ret" >> $env:GITHUB_ENV
+          echo "filePath=$ret" >> $env:GITHUB_ENV
 
     - name: Run Sync-RepoAccess
-      id: run-sync-repo-access
       shell: pwsh
       env:
         Role: ${{inputs.role}}
-        FilePath: ${{steps.find-file.outputs.filePath}}
         GH_TOKEN: ${{ github.token }}
       run: |
           # Run Sync-RepoAccess
 
           Import-Module -Name RepoHelper
-          $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
-          
-          echo "result=$result" >> $env:GITHUB_OUTPUT
+          #$result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
+          $result = @()
+          $result.user1 ='-'
+          $result.user2 ='+'
+          $result.user3 ='?'
+
+          echo "result=$result" >> $env:GITHUB_ENV
+
+    - name: Result
+      id: result
+      shell: pwsh
+      run: | 
+          # Convert to Json as result
+          $resultJson = $env:result | ConvertTo-Json
+          echo "resultJson= $resultJson" >> $env:GITHUB_ENV
+
+          echo "resultJson= $resultJson" >> $env:GITHUB_OUTPUT
 
     - name: Trace Results
       shell: pwsh
-      env:
-        result: ${{steps.run-sync-repo-access.outputs.result}}
       run: |
-          $env:result| Out-String | Write-Host
-
-          # Convert to Json for output parameter
-          $resultJson = $env:result | ConvertTo-Json
+          # Trace Result
+          $env:result | Out-String | Write-Host
           $resultJson | Out-String | Write-Host
 
-          echo "resultJson= $resultJson" >> $env:GITHUB_OUTPUT
-      
-    - name: Set Output Parameter
-      shell: bash
-      env:
-        resultJson: ${{steps.trace-results.outputs.resultJson}}
-      run: |
-          echo "table-of-updates= $resultJson" >> $env:GITHUB_OUTPUT
+
 
