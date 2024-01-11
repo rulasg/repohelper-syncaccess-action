@@ -29,5 +29,10 @@ jobs:
 
       # Run test with TestingHelper using local branch version
       # - uses: rulasg/actions-composite-template@main
-      - uses: ./
+      - name: Call the local action
+        id: call-local-action
+        uses: ./
+      
+      - name: Display action output
+        run: echo "The action output was [${{ steps.call-local-action.outputs.table-of-updates }}]"
 

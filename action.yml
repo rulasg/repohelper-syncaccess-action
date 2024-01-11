@@ -13,9 +13,9 @@ inputs:
     required: true
     default: 'CONTRIBUTORS'
 outputs:
-  tableUpdates:
+  table-of-updates:
     description: "Table of updates"
-    value: ${{steps.run-sync-repo-access.table-updates}}
+    value: ${{steps.run-sync-repo-access.table-of-updates}}
 runs:
   using: "composite"
   steps:
@@ -57,8 +57,9 @@ runs:
 
           # Convert to Json for output parameter
           $resultJson = $result | ConvertTo-Json
+          $resultJson | Out-String | Write-Host
 
           # Set output parameter
-          echo "table-updates = $resultJson" >> $GITHUB_OUTPUT
+          echo "table-of-updates = $resultJson" >> $GITHUB_OUTPUT
 
 
