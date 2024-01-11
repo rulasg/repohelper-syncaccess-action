@@ -29,5 +29,5 @@ jobs:
 
       # Run test with TestingHelper using local branch version
       # - uses: rulasg/actions-composite-template@main
-      - uses: .
+      - uses: ./
 
