@@ -29,7 +29,7 @@ runs:
           if ($null -eq $module) {
             Install-Module -Name RepoHelper -Force -AllowPrerelease
           }
-          Import-Module -Name RepoHelper
+          Get-Module -Name RepoHelper -ListAvailable
 
     - name: Find File
       id: find-file
@@ -52,6 +52,8 @@ runs:
             throw "Could not find file $env:FileName"
           }
 
+          "Found file $itemPath" | Write-Host
+
           echo "filePath= $item.FullName" >> $GITHUB_ENV
 
     - name: Run Sync-RepoAccess
@@ -61,7 +63,7 @@ runs:
         Role: ${{inputs.role}}
       run: |
           Import-Module -Name RepoHelper
-          $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
+          $result = Sync-RepoAccess -role $env:Role -FilePath $env:itemPath -WhatIf
           echo "result= $result" >> $GITHUB_ENV
 
     - name: Trace Results
