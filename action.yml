@@ -52,9 +52,13 @@ runs:
             throw "Could not find file $env:FileName"
           }
 
-          "Found file $itemPath" | Write-Host
+          $ret = $item.FullName
 
-          echo "filePath= $item.FullName" >> $GITHUB_OUTPUT
+          "Found file $ret" | Write-Host
+
+          echo "filePath= $ret" >> $GITHUB_OUTPUT
+
+          echo "kk= valorkk1" >> $GITHUB_OUTPUT
 
     - name: Run Sync-RepoAccess
       id: run-sync-repo-access
@@ -62,7 +66,10 @@ runs:
       env:
         Role: ${{inputs.role}}
         FilePath: ${{steps.find-file.outputs.filePath}}
+        KK: ${{steps.find-file.outputs.kk}}
       run: |
+          $env:KK | Out-String | Write-Host
+          
           Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
           
