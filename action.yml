@@ -56,9 +56,9 @@ runs:
 
           "Found file $ret" | Write-Host
 
-          echo "filePath= $ret" >> $GITHUB_OUTPUT
+          echo "filePath=$ret" >> $GITHUB_OUTPUT
 
-          echo "kk= valorkk1" >> $GITHUB_OUTPUT
+          echo "kk=valorkk1" >> $GITHUB_OUTPUT
 
     - name: Run Sync-RepoAccess
       id: run-sync-repo-access
@@ -68,8 +68,10 @@ runs:
         FilePath: ${{steps.find-file.outputs.filePath}}
         KK: ${{steps.find-file.outputs.kk}}
       run: |
-          $env:KK | Out-String | Write-Host
+          # Run Sync-RepoAccess
           
+          $env:KK | Out-String | Write-Host
+
           Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
           
