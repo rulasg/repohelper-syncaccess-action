@@ -73,7 +73,7 @@ runs:
           $result.user2 ='+'
           $result.user3 ='?'
 
-          $resultJson = $result | ConvertTo-Json
+          $resultJson = $result | ConvertTo-Json | Out-String
 
           echo "result=$resultJson >> $env:GITHUB_ENV
 
