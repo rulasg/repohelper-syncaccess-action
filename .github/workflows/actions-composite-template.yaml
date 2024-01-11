@@ -34,5 +34,5 @@ jobs:
         uses: ./
       
       - name: Display action output
-        run: echo "The action output was [${{ steps.call-local-action.outputs.table-of-updates }}]"
+        run: echo "The action output was [${{ steps.call-local-action.outputs.resultJson}}]"
 

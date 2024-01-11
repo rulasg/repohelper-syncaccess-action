@@ -13,9 +13,9 @@ inputs:
     required: true
     default: 'CONTRIBUTORS'
 outputs:
-  table-of-updates:
-    description: "Table of updates"
-    value: ${{steps.result.resultJson}}
+  resultJson:
+    description: "Table of updates in Json format"
+    value: ${{steps.result.outputs.resultJson}}
 runs:
   using: "composite"
   steps:
@@ -83,7 +83,7 @@ runs:
           $resultJson = $env:result | ConvertTo-Json
           echo "resultJson= $resultJson" >> $env:GITHUB_ENV
 
-          echo "resultJson= $resultJson" >> $env:GITHUB_OUTPUT
+          echo "resultJson=$resultJson" >> $env:GITHUB_OUTPUT
 
     - name: Trace Results
       shell: pwsh
