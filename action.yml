@@ -69,13 +69,14 @@ runs:
         KK: ${{steps.find-file.outputs.kk}}
       run: |
           # Run Sync-RepoAccess
-          
-          $env:KK | Out-String | Write-Host
+
+          "out 1 $($env:KK)" | Out-String | Write-Host
+          "out 2 ${{steps.find-file.outputs.kk}}" | Out-String | Write-Host
 
           Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
           
-          echo "result= $result" >> $GITHUB_OUTPUT
+          echo "result=$result" >> $GITHUB_OUTPUT
 
     - name: Trace Results
       shell: pwsh
