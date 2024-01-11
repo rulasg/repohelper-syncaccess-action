@@ -19,14 +19,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Run Sync-RepoAccess
-      id: run-sync-repo-access
-      shell: pwsh
-      env:
-        Role: ${{inputs.role}}
-        FileName: ${{inputs.fileName}}
-      run: |
 
+    - name: Install RepoHelper
+      id: install-repo-helper
+      shell: pwsh
+      run: |
           # Install RepoHelper module
           $module = Get-Module -ListAvailable -Name RepoHelper
           if ($null -eq $module) {
@@ -34,6 +31,12 @@ runs:
           }
           Import-Module -Name RepoHelper
 
+    - name: Find File
+      id: find-file
+      shell: pwsh
+      env:
+        FileName: ${{inputs.fileName}}
+      run: |
           # Find CONTRIBUTORS
           $itemPath = $env:FileName
           if($itemPath | Test-Path){
@@ -49,17 +52,31 @@ runs:
             throw "Could not find file $env:FileName"
           }
 
-          # Run Sync-RepoAccess
-          $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
+          echo "filePath= $item.FullName" >> $GITHUB_ENV
 
-          # Output to the default output for tracing
+    - name: Run Sync-RepoAccess
+      id: run-sync-repo-access
+      shell: pwsh
+      env:
+        Role: ${{inputs.role}}
+      run: |
+          $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
+          echo "result= $result" >> $GITHUB_ENV
+
+    - name: Trace Results
+      shell: pwsh
+      run: |
           $result| Out-String | Write-Host
 
           # Convert to Json for output parameter
           $resultJson = $result | ConvertTo-Json
           $resultJson | Out-String | Write-Host
 
-          # Set output parameter
+          echo "resultJson= $resultJson" >> $GITHUB_ENV
+      
+    - name: Set Output Parameter
+      shell: pwsh
+      run: |
           echo "table-of-updates= $resultJson" >> $GITHUB_OUTPUT
 
           return 0
