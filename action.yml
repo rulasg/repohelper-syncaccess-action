@@ -1,34 +1,60 @@
-name: 'Actions Composite Template'
-description: 'Greet someone'
+name: 'Sync Repo Access'
+description: 'Sync Repo Access list with the users listed in a file'
 branding:
-  icon: "check-circle"
-  color: "green"
+  icon: "lock"
+  color: "orange"
 inputs:
-  who-to-greet:
-    description: 'who to greet'
+  role:
+    description: 'Role of the users to update'
     required: true
-    default: '${{github.actor}}'
+    default: 'write'
+  filename:
+    description: 'filename to read users from'
+    required: true
+    default: 'CONTRIBUTORS'
 outputs:
-  random-number:
-    description: "Random number"
-    value: ${{steps.number-generator.outputs.number-id}}
+  tableUpdates:
+    description: "Table of updates"
+    value: ${{steps.run-sync-repo-access.table-updates}}
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
-
-    - run: echo "numberid=${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
-      shell: bash
-    
-    - id: number-generator
-      run: echo "number-id= $numberid" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - run: echo "number $numberid"
-      shell: bash
-
-    - run: echo "Goodbye $YOU from $numberid"
-      shell: bash
+    - name: Run Sync-RepoAccess
+      id: run-sync-repo-access
+      shell: pwsh
       env:
-        YOU: ${{ inputs.who-to-greet }}
+        Role: ${{inputs.role}}
+        FileName: ${{inputs.fileName}}
+      run: |
+
+          # Install RepoHelper module
+          $module = Get-Module -ListAvailable -Name RepoHelper
+          if ($null -eq $module) {
+            Install-Module -Name RepoHelper -Force -AllowPrerelease
+          }
+          Import-Module -Name RepoHelper
+
+          # Find CONTRIBUTORS
+          $itemPath = $env:FileName
+          if($itemPath | Test-Path){
+            $item = $itemPath | Get-Item
+          }
+
+          $itemPath = ".github" | Join-Path -ChildPath $env:FileName
+          if($itemPath | Test-Path){
+            $item = $itemPath | Get-Item
+          }
+
+          # Run Sync-RepoAccess
+          $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
+
+          # Output to the default output for tracing
+          $result| Out-String | Write-Host
+
+          # Convert to Json for output parameter
+          $resultJson = $result | ConvertTo-Json
+
+          # Set output parameter
+          echo "table-updates = $resultJson" >> $GITHUB_OUTPUT
+
+
