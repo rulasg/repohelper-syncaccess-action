@@ -68,7 +68,7 @@ runs:
 
           Import-Module -Name RepoHelper
           #$result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
-          $result = @()
+          $result = @{}
           $result.user1 ='-'
           $result.user2 ='+'
           $result.user3 ='?'
