@@ -60,6 +60,7 @@ runs:
       env:
         Role: ${{inputs.role}}
       run: |
+          Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
           echo "result= $result" >> $GITHUB_ENV
 
@@ -75,9 +76,7 @@ runs:
           echo "resultJson= $resultJson" >> $GITHUB_ENV
       
     - name: Set Output Parameter
-      shell: pwsh
+      shell: bash
       run: |
           echo "table-of-updates= $resultJson" >> $GITHUB_OUTPUT
-
-          return 0
 
