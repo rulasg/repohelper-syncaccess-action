@@ -45,6 +45,10 @@ runs:
             $item = $itemPath | Get-Item
           }
 
+          if($null -eq $item){
+            throw "Could not find file $env:FileName"
+          }
+
           # Run Sync-RepoAccess
           $result = Sync-RepoAccess -role $env:Role -FilePath $item.FullName -WhatIf
 
