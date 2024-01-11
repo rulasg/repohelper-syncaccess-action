@@ -61,6 +61,7 @@ runs:
           echo "kk=valorkk1" >> $GITHUB_OUTPUT
 
     - name: Set tag var
+      shell: bash
       id: vars
       run: echo "docker_tag=$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
