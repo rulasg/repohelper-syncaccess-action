@@ -60,6 +60,11 @@ runs:
 
           echo "kk=valorkk1" >> $GITHUB_OUTPUT
 
+    - name: Set tag var
+      id: vars
+      run: echo "docker_tag=$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
+
     - name: Run Sync-RepoAccess
       id: run-sync-repo-access
       shell: pwsh
@@ -72,6 +77,7 @@ runs:
 
           "out 1 $($env:KK)" | Out-String | Write-Host
           "out 2 ${{steps.find-file.outputs.kk}}" | Out-String | Write-Host
+          "out 3 ${{ steps.vars.outputs.docker_tag }}" | Out-String | Write-Host
 
           Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
