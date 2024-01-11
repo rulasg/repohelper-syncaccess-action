@@ -57,14 +57,7 @@ runs:
           "Found file $ret" | Write-Host
 
           echo "filePath=$ret" >> $env:GITHUB_OUTPUT
-
-          echo "kk=valorkk1" >> $env:GITHUB_OUTPUT
-
-    - name: Set tag var
-      shell: bash
-      id: vars
-      run: echo "docker_tag=$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}" >> $GITHUB_OUTPUT
-
+          echo "filePathEnv=$ret" >> $env:GITHUB_ENV
 
     - name: Run Sync-RepoAccess
       id: run-sync-repo-access
@@ -72,18 +65,14 @@ runs:
       env:
         Role: ${{inputs.role}}
         FilePath: ${{steps.find-file.outputs.filePath}}
-        KK: ${{steps.find-file.outputs.kk}}
+        GH_TOKEN: ${{ github.token }}
       run: |
           # Run Sync-RepoAccess
-
-          "out 1 $($env:KK)" | Out-String | Write-Host
-          "out 2 ${{steps.find-file.outputs.kk}}" | Out-String | Write-Host
-          "out 3 ${{ steps.vars.outputs.docker_tag }}" | Out-String | Write-Host
 
           Import-Module -Name RepoHelper
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
           
-          echo "result=$result" >> $GITHUB_OUTPUT
+          echo "result=$result" >> $env:GITHUB_OUTPUT
 
     - name: Trace Results
       shell: pwsh
@@ -96,12 +85,12 @@ runs:
           $resultJson = $env:result | ConvertTo-Json
           $resultJson | Out-String | Write-Host
 
-          echo "resultJson= $resultJson" >> $GITHUB_OUTPUT
+          echo "resultJson= $resultJson" >> $env:GITHUB_OUTPUT
       
     - name: Set Output Parameter
       shell: bash
       env:
         resultJson: ${{steps.trace-results.outputs.resultJson}}
       run: |
-          echo "table-of-updates= $resultJson" >> $GITHUB_OUTPUT
+          echo "table-of-updates= $resultJson" >> $env:GITHUB_OUTPUT
 
