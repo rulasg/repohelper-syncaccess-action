@@ -56,9 +56,9 @@ runs:
 
           "Found file $ret" | Write-Host
 
-          echo "filePath=$ret" >> $GITHUB_OUTPUT
+          echo "filePath=$ret" >> $env:GITHUB_OUTPUT
 
-          echo "kk=valorkk1" >> $GITHUB_OUTPUT
+          echo "kk=valorkk1" >> $env:GITHUB_OUTPUT
 
     - name: Set tag var
       shell: bash
