@@ -60,6 +60,7 @@ runs:
           $resultJson | Out-String | Write-Host
 
           # Set output parameter
-          # echo "table-of-updates= $resultJson" >> $GITHUB_OUTPUT
+          echo "table-of-updates= $resultJson" >> $GITHUB_OUTPUT
 
+          return 0
 
