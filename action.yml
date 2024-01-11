@@ -73,9 +73,9 @@ runs:
           $result.user2 ='+'
           $result.user3 ='?'
 
-          $resultJson = $result | ConvertTo-Json | Out-String
+          $resultJson = $result | ConvertTo-Json
 
-          echo "result=$resultJson >> $env:GITHUB_ENV
+          echo "result=$resultJson" >> $env:GITHUB_ENV
 
     - name: Result
       id: result
