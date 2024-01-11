@@ -73,24 +73,26 @@ runs:
           $result.user2 ='+'
           $result.user3 ='?'
 
-          echo "result=$result" >> $env:GITHUB_ENV
+          $resultJson = $result | ConvertTo-Json
+
+          echo "result=$resultJson >> $env:GITHUB_ENV
 
     - name: Result
       id: result
       shell: pwsh
       run: | 
-          # Convert to Json as result
-          $resultJson = $env:result | ConvertTo-Json
-          echo "resultJson= $resultJson" >> $env:GITHUB_ENV
-
-          echo "resultJson=$resultJson" >> $env:GITHUB_OUTPUT
+          # Result
+          echo "resultJson= $env:result" >> $env:GITHUB_ENV
+          echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
     - name: Trace Results
       shell: pwsh
       run: |
           # Trace Result
-          $env:result | Out-String | Write-Host
           $resultJson | Out-String | Write-Host
+
+          $result = $resultJson | ConvertFrom-Json
+          $result | Out-String | Write-Host
 
 
 
