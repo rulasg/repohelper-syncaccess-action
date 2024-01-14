@@ -74,11 +74,15 @@ runs:
           $result.user2 ='+'
           $result.user3 ='?'
 
-          $resultJson = $result | ConvertTo-Json | Out-String
+          $resultJson = $result | ConvertTo-Json
 
           $resultJson | Out-String | Write-Host
 
-          echo "result=$resultJson" >> $env:GITHUB_ENV
+          # echo "result= $resultJson" >> $env:GITHUB_ENV
+
+          @"
+          resultJson= $env:result
+          "@ | Out-File -Append $env:GITHUB_ENV
 
     - name: Result
       id: result
