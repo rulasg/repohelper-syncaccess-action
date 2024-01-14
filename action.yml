@@ -12,6 +12,10 @@ inputs:
     description: 'filename to read users from'
     required: true
     default: 'CONTRIBUTORS'
+  what_if_mode:
+    description: "When true no change will happen in the repo. You will get analysis output"
+    required: true
+    default: 'true'
 outputs:
   resultJson:
     description: "Table of updates in Json format"
@@ -62,12 +66,15 @@ runs:
       env:
         Role: ${{inputs.role}}
         GH_TOKEN: ${{ github.token }}
+        what_if_mode: ${{inputs.what_if_mode}}
       run: |
           # Run Sync-RepoAccess
 
           Import-Module -Name RepoHelper
 
-          $result = Sync-RepoAccess -role $env:Role -FilePath $env:filePath -Verbose -WhatIf
+          $what_if_mode = $env:what_if_mode -eq "true"
+
+          $result = Sync-RepoAccess -role $env:Role -FilePath $env:filePath -Verbose -WhatIf:$what_if_mode
 
           $resultJson = $result | ConvertTo-Json
 
