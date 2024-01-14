@@ -80,9 +80,9 @@ runs:
 
           # echo "result= $resultJson" >> $env:GITHUB_ENV
 
-          @"
-          resultJson= $resultJson
-          "@ | Out-File -Append $env:GITHUB_ENV
+          echo "resultJson<<EOF" >> $env:GITHUB_ENV
+          echo "$resultJson" >> $env:GITHUB_ENV
+          echo "EOF" >> $env:GITHUB_ENV
 
     - name: Result
       id: result
