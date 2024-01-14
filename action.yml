@@ -92,14 +92,14 @@ runs:
           echo "resultJson= $env:result" >> $env:GITHUB_ENV
           echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
-    - name: Trace Results
-      shell: pwsh
-      run: |
-          # Trace Result
-          $resultJson | Out-String | Write-Host
+    # - name: Trace Results
+    #   shell: pwsh
+    #   run: |
+    #       # Trace Result
+    #       $resultJson | Out-String | Write-Host
 
-          $result = $resultJson | ConvertFrom-Json
-          $result | Out-String | Write-Host
+    #       $result = $resultJson | ConvertFrom-Json
+    #       $result | Out-String | Write-Host
 
 
 
