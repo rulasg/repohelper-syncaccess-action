@@ -80,6 +80,7 @@ runs:
           echo "$resultJson" >> $env:GITHUB_ENV
           echo "EOF" >> $env:GITHUB_ENV
 
+          return 0
     - name: Trace Results
       shell: pwsh
       run: |
