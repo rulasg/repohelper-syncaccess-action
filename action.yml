@@ -76,13 +76,15 @@ runs:
 
           $resultJson = $result | ConvertTo-Json
 
-          $resultJson | Out-String | Write-Host
-
-          # echo "result= $resultJson" >> $env:GITHUB_ENV
-
           echo "resultJson<<EOF" >> $env:GITHUB_ENV
           echo "$resultJson" >> $env:GITHUB_ENV
           echo "EOF" >> $env:GITHUB_ENV
+
+    - name: Trace Results
+      shell: pwsh
+      run: |
+          # Trace Result
+          $resultJson | Out-String | Write-Host
 
     - name: Result
       id: result
@@ -90,27 +92,14 @@ runs:
       run: | 
           # Result
 
-
-          echo "resultJson<<EOF" >> $env:GITHUB_ENV
-          echo "$resultJson" >> $env:GITHUB_ENV
-          echo "EOF" >> $env:GITHUB_ENV
+          # echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
           echo "resultJson<<EOF" >> $env:GITHUB_OUTPUT
           echo "$resultJson" >> $env:GITHUB_OUTPUT
           echo "EOF" >> $env:GITHUB_OUTPUT
 
 
-          # echo "resultJson= $env:result" >> $env:GITHUB_ENV
-          # echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
-    # - name: Trace Results
-    #   shell: pwsh
-    #   run: |
-    #       # Trace Result
-    #       $resultJson | Out-String | Write-Host
-
-    #       $result = $resultJson | ConvertFrom-Json
-    #       $result | Out-String | Write-Host
 
 
 
