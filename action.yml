@@ -68,11 +68,11 @@ runs:
 
           Import-Module -Name RepoHelper
 
-          #$result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
-          $result = @{}
-          $result.user1 ='-'
-          $result.user2 ='+'
-          $result.user3 ='?'
+          $result = Sync-RepoAccess -role $env:Role -FilePath $env:FilePath -WhatIf
+          # $result = @{}
+          # $result.user1 ='-'
+          # $result.user2 ='+'
+          # $result.user3 ='?'
 
           $resultJson = $result | ConvertTo-Json
 
