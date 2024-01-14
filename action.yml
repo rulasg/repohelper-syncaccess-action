@@ -1,34 +1,99 @@
-name: 'Actions Composite Template'
-description: 'Greet someone'
+name: 'Sync Repo Access'
+description: 'Sync Repo Access list with the users listed in a file'
 branding:
-  icon: "check-circle"
-  color: "green"
+  icon: "lock"
+  color: "orange"
 inputs:
-  who-to-greet:
-    description: 'who to greet'
+  role:
+    description: 'Role of the users to update'
     required: true
-    default: '${{github.actor}}'
+    default: 'write'
+  filename:
+    description: 'filename to read users from'
+    required: true
+    default: 'CONTRIBUTORS'
 outputs:
-  random-number:
-    description: "Random number"
-    value: ${{steps.number-generator.outputs.number-id}}
+  resultJson:
+    description: "Table of updates in Json format"
+    value: ${{steps.result.outputs.resultJson}}
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
 
-    - run: echo "numberid=${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
-      shell: bash
-    
-    - id: number-generator
-      run: echo "number-id= $numberid" >> $GITHUB_OUTPUT
-      shell: bash
+    - name: Install RepoHelper
+      id: install-repo-helper
+      shell: pwsh
+      run: |
+          # Install RepoHelper module
+          $module = Get-Module -ListAvailable -Name RepoHelper
+          if ($null -eq $module) {
+            Install-Module -Name RepoHelper -Force -AllowPrerelease
+          }
+          Get-Module -Name RepoHelper -ListAvailable
 
-    - run: echo "number $numberid"
-      shell: bash
-
-    - run: echo "Goodbye $YOU from $numberid"
-      shell: bash
+    - name: Find users file
+      shell: pwsh
       env:
-        YOU: ${{ inputs.who-to-greet }}
+        FileName: ${{inputs.fileName}}
+      run: |
+          # Find CONTRIBUTORS
+          $itemPath = $env:FileName
+          if($itemPath | Test-Path){
+            $item = $itemPath | Get-Item
+          }
+
+          $itemPath = ".github" | Join-Path -ChildPath $env:FileName
+          if($itemPath | Test-Path){
+            $item = $itemPath | Get-Item
+          }
+
+          if($null -eq $item){
+            throw "Could not find file $env:FileName"
+          }
+
+          $ret = $item.FullName
+
+          "Found file $ret" | Write-Host
+
+          echo "filePath=$ret" >> $env:GITHUB_ENV
+
+    - name: Run Sync-RepoAccess
+      shell: pwsh
+      env:
+        Role: ${{inputs.role}}
+        GH_TOKEN: ${{ github.token }}
+      run: |
+          # Run Sync-RepoAccess
+
+          Import-Module -Name RepoHelper
+
+          $result = Sync-RepoAccess -role $env:Role -FilePath $env:filePath -Verbose -WhatIf
+
+          $resultJson = $result | ConvertTo-Json
+
+          echo "resultJson<<EOF" >> $env:GITHUB_ENV
+          echo "$resultJson" >> $env:GITHUB_ENV
+          echo "EOF" >> $env:GITHUB_ENV
+
+          return 0
+    - name: Trace Results
+      shell: pwsh
+      run: |
+          # Trace Result
+          $env:resultJson | Out-String | Write-Host
+
+    - name: Result
+      id: result
+      shell: pwsh
+      run: | 
+          # Result
+
+          echo "resultJson<<EOF" >> $env:GITHUB_OUTPUT
+          echo "$env:resultJson" >> $env:GITHUB_OUTPUT
+          echo "EOF" >> $env:GITHUB_OUTPUT
+
+
+
+
+
+
