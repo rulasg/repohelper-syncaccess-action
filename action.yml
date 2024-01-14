@@ -89,8 +89,19 @@ runs:
       shell: pwsh
       run: | 
           # Result
-          echo "resultJson= $env:result" >> $env:GITHUB_ENV
-          echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
+
+
+          echo "resultJson<<EOF" >> $env:GITHUB_ENV
+          echo "$resultJson" >> $env:GITHUB_ENV
+          echo "EOF" >> $env:GITHUB_ENV
+
+          echo "resultJson<<EOF" >> $env:GITHUB_OUTPUT
+          echo "$resultJson" >> $env:GITHUB_OUTPUT
+          echo "EOF" >> $env:GITHUB_OUTPUT
+
+
+          # echo "resultJson= $env:result" >> $env:GITHUB_ENV
+          # echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
     # - name: Trace Results
     #   shell: pwsh
