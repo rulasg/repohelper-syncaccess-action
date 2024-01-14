@@ -31,8 +31,7 @@ runs:
           }
           Get-Module -Name RepoHelper -ListAvailable
 
-    - name: Find File
-      id: find-file
+    - name: Find users file
       shell: pwsh
       env:
         FileName: ${{inputs.fileName}}
