@@ -69,10 +69,6 @@ runs:
           Import-Module -Name RepoHelper
 
           $result = Sync-RepoAccess -role $env:Role -FilePath $env:filePath -Verbose -WhatIf
-          # $result = @{}
-          # $result.user1 ='-'
-          # $result.user2 ='+'
-          # $result.user3 ='?'
 
           $resultJson = $result | ConvertTo-Json
 
@@ -92,8 +88,6 @@ runs:
       shell: pwsh
       run: | 
           # Result
-
-          # echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
           echo "resultJson<<EOF" >> $env:GITHUB_OUTPUT
           echo "$env:resultJson" >> $env:GITHUB_OUTPUT
