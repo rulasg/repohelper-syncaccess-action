@@ -84,7 +84,7 @@ runs:
       shell: pwsh
       run: |
           # Trace Result
-          $resultJson | Out-String | Write-Host
+          $env:resultJson | Out-String | Write-Host
 
     - name: Result
       id: result
@@ -95,7 +95,7 @@ runs:
           # echo "resultJson= $env:result" >> $env:GITHUB_OUTPUT
 
           echo "resultJson<<EOF" >> $env:GITHUB_OUTPUT
-          echo "$resultJson" >> $env:GITHUB_OUTPUT
+          echo "$env:resultJson" >> $env:GITHUB_OUTPUT
           echo "EOF" >> $env:GITHUB_OUTPUT
 
 
