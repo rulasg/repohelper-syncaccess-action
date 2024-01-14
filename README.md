@@ -28,8 +28,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Run test with TestingHelper using local branch version
-      # - uses: rulasg/actions-composite-template@main
+      # Run action
       - name: Sync Repo Access
         uses: rulasg/repohelper-syncaccess-action@v1.1
         with:
