@@ -81,7 +81,7 @@ runs:
           # echo "result= $resultJson" >> $env:GITHUB_ENV
 
           @"
-          resultJson= $env:result
+          resultJson= $resultJson
           "@ | Out-File -Append $env:GITHUB_ENV
 
     - name: Result
