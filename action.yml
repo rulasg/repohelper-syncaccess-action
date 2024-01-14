@@ -7,7 +7,7 @@ inputs:
   role:
     description: 'Role of the users to update'
     required: true
-    default: 'write'
+    default: 'triage'
   filename:
     description: 'filename to read users from'
     required: true
