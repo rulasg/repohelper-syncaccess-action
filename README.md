@@ -1,39 +1,49 @@
-# Actions Composite Template
+# RepoHelper SyncAccess Action
 
-Composite action template to learn and seed other actions.
-
-## Calling the action
-
-This workflow will run a job with a step that will call the action and a job that will call the resusable workflow that will call the action.
+This action will take a list of users from a file and will update the repo access for those users with the specific role.
 
 ```yaml
-name: Call Actions Composite Template
 
-on: 
+name: Repo Access Workflow
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  # To run test we only need to read the repository
+  contents: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  ACT-call:
-    name: Call to Actions Composite template
+  # This workflow contains a single job called "test"
+  SyncAccess:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # call the action with no parameters
-      - name: Execute Actions-composite-template action
-        id: actions_composite
-        uses: rulasg/actions-composite-template@main
-
-      # Check step output value of the action
-      - run: echo "The output was ${{ steps.actions_composite.outputs.random-number }}"
-        shell: bash
-       
-      # call the action with parameters
-      - uses: rulasg/actions-composite-template@main
+      # Run test with TestingHelper using local branch version
+      # - uses: rulasg/actions-composite-template@main
+      - name: Sync Repo Access
+        uses: rulasg/repohelper-syncaccess-action@v1.1
         with:
-          who-to-greet: "Raúl"
+            role: 'triage'
+            what_if_mode: 'true'
+            filename: 'CONTRIBUTORS'
+      
+      - name: Display action output
+        shell: pwsh
+        env:
+          RESULT_JSON: ${{ steps.call-local-action.outputs.resultJson}}
+        run: | 
+          $result = $env:RESULT_JSON | convertfrom-json
 
-  ACT-reusable:
-    # call the reusable WF
-    uses: rulasg/actions-composite-template/.github/workflows/actions-composite-template.yaml@main
+          $result | Write-Host
+
 ```
