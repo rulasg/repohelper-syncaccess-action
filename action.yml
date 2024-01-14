@@ -76,6 +76,8 @@ runs:
 
           $resultJson = $result | ConvertTo-Json | Out-String
 
+          $resultJson | Out-String | Write-Host
+
           echo "result=$resultJson" >> $env:GITHUB_ENV
 
     - name: Result
