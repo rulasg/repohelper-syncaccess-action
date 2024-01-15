@@ -2,6 +2,9 @@
 
 This action will take a list of users from a file and will update the repo access for those users with the specific role.
 
+> [!Note]
+>  Use [Making authenticated API requests with a GitHub App in a GitHub Actions workflow](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow) to generate the needed token to update the repo.
+
 ```yaml
 
 name: Repo Access Workflow
@@ -13,7 +16,7 @@ on:
 
 permissions:
   # To run test we only need to read the repository
-  contents: write
+  contents: read
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -28,18 +31,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Run action
+      # Run test with TestingHelper using local branch version
+      # - uses: rulasg/actions-composite-template@main
       - name: Sync Repo Access
-        uses: rulasg/repohelper-syncaccess-action@v1.1
+        id: sync-repo-access
+        uses: rulasg/repohelper-syncaccess-action@v1.2
         with:
             role: 'triage'
             what_if_mode: 'true'
             filename: 'CONTRIBUTORS'
+            gh_token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Display action output
         shell: pwsh
         env:
-          RESULT_JSON: ${{ steps.call-local-action.outputs.resultJson}}
+          RESULT_JSON: ${{ steps.sync-repo-access.outputs.resultJson}}
         run: | 
           $result = $env:RESULT_JSON | convertfrom-json
 
