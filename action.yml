@@ -16,6 +16,10 @@ inputs:
     description: "When true no change will happen in the repo. You will get analysis output"
     required: true
     default: 'true'
+  gh_token:
+    description: "GitHub Token to be used to access the repo"
+    required: true
+    default: ${{ secrets.GITHUB_TOKEN }}
 outputs:
   resultJson:
     description: "Table of updates in Json format"
